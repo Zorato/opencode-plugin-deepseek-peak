@@ -4,6 +4,8 @@ An [OpenCode](https://opencode.ai) TUI plugin that shows a live DeepSeek pricing
 indicator in the sidebar: whether you are in peak hours right now, when the
 state flips, and a warning when the holiday calendar is missing.
 
+![DeepSeek pricing indicator in the OpenCode sidebar](preview.png)
+
 ## What it shows
 
 ```
