@@ -1,0 +1,35 @@
+{
+  "name": "opencode-plugin-deepseek-peak",
+  "version": "1.0.0",
+  "description": "OpenCode TUI plugin: DeepSeek peak/off-peak pricing indicator in the sidebar",
+  "type": "module",
+  "license": "MIT",
+  "author": "Alexey Rehov <alexey.rehov@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zorato/opencode-plugin-deepseek-peak.git"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "tui",
+    "deepseek",
+    "sidebar"
+  ],
+  "files": [
+    "index.ts",
+    "tui.tsx"
+  ],
+  "exports": {
+    ".": "./index.ts",
+    "./tui": "./tui.tsx"
+  },
+  "dependencies": {
+    "@opencode/plugin": "latest"
+  },
+  "peerDependencies": {
+    "@opentui/core": ">=0.6.6",
+    "@opentui/solid": ">=0.6.6",
+    "solid-js": ">=1.9.0"
+  }
+}
