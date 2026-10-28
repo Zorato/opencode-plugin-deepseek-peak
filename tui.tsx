@@ -89,6 +89,31 @@ function formatLocalTime(date: Date): string {
   return `${hours}:${minutes}`
 }
 
+// Short form for the prompt footer: the word and its color are the whole
+// message, so it fits beside the Jevvy badge and the key hints. The sidebar
+// keeps the long form with the countdown.
+function FooterPeakStatus(props: {
+  theme: Plugin.Context["theme"]
+  now: () => Date
+}) {
+  const view = () => {
+    const peak = isPeakHour(props.now())
+    return {
+      text: peak ? "PEAK x2" : "OFF-PEAK",
+      color: peak
+        ? props.theme.text.feedback.error.base
+        : props.theme.text.feedback.success.base,
+    }
+  }
+  return (
+    <box paddingLeft={2} flexShrink={0}>
+      <text wrapMode="none" fg={view().color}>
+        {view().text}
+      </text>
+    </box>
+  )
+}
+
 function DeepSeekPeakStatus(props: {
   theme: Plugin.Context["theme"]
   now: () => Date
@@ -127,11 +152,23 @@ export default Plugin.define({
     const [now, setNow] = createSignal(new Date())
     const clock = setInterval(() => setNow(new Date()), CLOCK_MS)
 
-    context.ui.slot({
+    const sidebar = context.ui.slot({
       append: "sidebar.content",
       render: () => <DeepSeekPeakStatus theme={context.theme} now={now} />,
     })
 
-    return () => clearInterval(clock)
+    // `prompt.footer.status` is the right-hand group of the prompt footer, the
+    // same slot the Jevvy badge and the /btw marker use. It renders on the
+    // home screen and inside a session, so the label is deliberately short.
+    const footer = context.ui.slot({
+      append: "prompt.footer.status",
+      render: () => <FooterPeakStatus theme={context.theme} now={now} />,
+    })
+
+    return () => {
+      clearInterval(clock)
+      sidebar()
+      footer()
+    }
   },
 })

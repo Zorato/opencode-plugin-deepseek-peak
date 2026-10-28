@@ -1,7 +1,7 @@
 {
   "name": "opencode-plugin-deepseek-peak",
-  "version": "1.1.0",
-  "description": "OpenCode TUI plugin: DeepSeek peak/off-peak pricing indicator in the sidebar",
+  "version": "1.2.0",
+  "description": "OpenCode TUI plugin: DeepSeek peak/off-peak pricing indicator on the home screen and in the sidebar",
   "type": "module",
   "license": "MIT",
   "author": "Alexey Rehov <alexey.rehov@gmail.com>",

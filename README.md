@@ -1,12 +1,24 @@
 # opencode-plugin-deepseek-peak
 
 An [OpenCode](https://opencode.ai) TUI plugin that shows a live DeepSeek pricing
-indicator in the sidebar: whether you are in peak hours right now, when the
-state flips, and a warning when the holiday calendar is missing.
+indicator: a short status in the prompt footer and a detailed block in the
+sidebar. It tells you whether you are in peak hours right now, when the state
+flips, and warns when the holiday calendar is missing.
 
 ![DeepSeek pricing indicator in the OpenCode sidebar](preview.png)
 
 ## What it shows
+
+Prompt footer, beside the Jevvy badge and the key hints:
+
+```
+OFF-PEAK
+```
+
+- `PEAK x2` (red) during peak hours, `OFF-PEAK` (green) otherwise
+- One word, so it stays out of the way on the home screen and in sessions
+
+Sidebar, inside a session:
 
 ```
 DeepSeek pricing
@@ -85,6 +97,7 @@ marks the sidebar with a warning.
 
 - Computes peak state from the UTC clock: peak windows 01:00-04:00 and
   06:00-10:00 UTC, Monday through Friday, minus Chinese public holidays.
+- Claims the `prompt.footer.status` and `sidebar.content` slots.
 - Refreshes every 30 seconds and shows the countdown to the next flip.
 - Reads no credentials, sends no requests, stores nothing.
 
@@ -119,7 +132,8 @@ The package follows the OpenCode v2 CLI plugin contract:
 
 | Symptom | Cause |
 | --- | --- |
-| Nothing rendered | The sidebar is hidden, or you are not inside a session. Sidebar slots only exist within a session. |
+| Nothing rendered in the sidebar | The sidebar is hidden, or you are not inside a session. Sidebar slots only exist within a session. |
+| Nothing rendered on the start screen | The plugin is not loaded. Check `/plugins` in the TUI. |
 | Plugin does not load | Check `/plugins` in the TUI. The configured path must be a directory containing `package.json`. |
 | `no CN holiday data for this year` | Add the year's rest days to `CN_HOLIDAYS` in `tui.tsx` (see above). |
 
