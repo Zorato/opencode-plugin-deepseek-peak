@@ -1,6 +1,12 @@
 /** @jsxImportSource @opentui/solid */
-import { Plugin, usePlugin } from "@opencode/plugin/tui"
-import { createSignal, onCleanup } from "solid-js"
+import { Plugin } from "@opencode/plugin/tui"
+import { createSignal } from "solid-js"
+
+// The host repaints the sidebar from its own events and re-invokes a slot's
+// `render`, so a timer created inside the component is dropped with that
+// component. The clock therefore lives in `setup` and the component only reads
+// it.
+const CLOCK_MS = 30_000
 
 // DeepSeek peak hours are 01:00-04:00 and 06:00-10:00 UTC, Monday through
 // Friday, excluding Chinese public holidays. Every other hour, including
@@ -83,21 +89,19 @@ function formatLocalTime(date: Date): string {
   return `${hours}:${minutes}`
 }
 
-function DeepSeekPeakStatus() {
-  const context = usePlugin()
-  const [now, setNow] = createSignal(new Date())
-  const timer = setInterval(() => setNow(new Date()), 30_000)
-  onCleanup(() => clearInterval(timer))
-
+function DeepSeekPeakStatus(props: {
+  theme: Plugin.Context["theme"]
+  now: () => Date
+}) {
   const view = () => {
-    const current = now()
+    const current = props.now()
     const peak = isPeakHour(current)
     const flip = nextFlip(current)
     return {
       status: peak ? "PEAK x2" : "OFF-PEAK -50%",
       color: peak
-        ? context.theme.text.feedback.error.base
-        : context.theme.text.feedback.success.base,
+        ? props.theme.text.feedback.error.base
+        : props.theme.text.feedback.success.base,
       countdown: formatDuration(flip.getTime() - current.getTime()),
       next: peak ? "off-peak" : "peak",
       flipTime: formatLocalTime(flip),
@@ -120,9 +124,14 @@ function DeepSeekPeakStatus() {
 export default Plugin.define({
   id: "deepseek-peak",
   setup(context) {
-    return context.ui.slot({
+    const [now, setNow] = createSignal(new Date())
+    const clock = setInterval(() => setNow(new Date()), CLOCK_MS)
+
+    context.ui.slot({
       append: "sidebar.content",
-      render: () => <DeepSeekPeakStatus />,
+      render: () => <DeepSeekPeakStatus theme={context.theme} now={now} />,
     })
+
+    return () => clearInterval(clock)
   },
 })
